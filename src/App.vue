@@ -1,9 +1,9 @@
 <template>
   <div id="app">
-    <div class="header">
-      <div class="inner">
+    <header class="header">
+      <nav class="inner">
         <router-link to="/" exact>
-          <img class="logo" src="./assets/logo.png" alt="logo">
+          <img class="logo" src="~public/logo-48.png" alt="logo">
         </router-link>
         <router-link to="/top">Top</router-link>
         <router-link to="/new">New</router-link>
@@ -13,8 +13,8 @@
         <a class="github" href="https://github.com/vuejs/vue-hackernews-2.0" target="_blank">
           Built with Vue.js
         </a>
-      </div>
-    </div>
+      </nav>
+    </header>
     <transition name="fade" mode="out-in">
       <router-view class="view"></router-view>
     </transition>
@@ -23,12 +23,13 @@
 
 <style lang="stylus">
 body
-  font-family Roboto, Helvetica, sans-serif
+  font-family -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
   font-size 15px
   background-color lighten(#eceef1, 30%)
   margin 0
   padding-top 55px
   color #34495e
+  overflow-y scroll
 
 a
   color #34495e
@@ -38,6 +39,7 @@ a
   background-color #ff6600
   position fixed
   z-index 999
+  height 55px
   top 0
   left 0
   right 0

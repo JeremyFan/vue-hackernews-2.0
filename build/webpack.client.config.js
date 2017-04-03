@@ -1,42 +1,47 @@
-const base = require('./webpack.base.config')
 const webpack = require('webpack')
+const merge = require('webpack-merge')
+const base = require('./webpack.base.config')
+const vueConfig = require('./vue-loader.config')
+const HTMLPlugin = require('html-webpack-plugin')
+const SWPrecachePlugin = require('sw-precache-webpack-plugin')
 
-const config = Object.assign({}, base, {
+const config = merge(base, {
+  resolve: {
+    alias: {
+      'create-api': './create-api-client.js'
+    }
+  },
   plugins: [
-    // strip comments in Vue code
+    // strip dev-only code in Vue source
     new webpack.DefinePlugin({
-      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+      'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+      'process.env.VUE_ENV': '"client"'
     }),
     // extract vendor chunks for better caching
     new webpack.optimize.CommonsChunkPlugin({
-      name: 'vendor',
-      filename: 'client-vendor-bundle.js'
+      name: ['vendor', 'manifest']
+    }),
+    // generate output HTML
+    new HTMLPlugin({
+      template: 'src/index.template.html'
     })
   ]
 })
 
 if (process.env.NODE_ENV === 'production') {
-  // extract CSS into a single file so it's applied on initial render
-  const ExtractTextPlugin = require('extract-text-webpack-plugin')
-
-  config.vue.loaders = {
-    stylus: ExtractTextPlugin.extract({
-      loader: "css-loader!stylus-loader",
-      fallbackLoader: "vue-style-loader"
-    })
-  }
-
   config.plugins.push(
-    new ExtractTextPlugin('styles.css'),
-    // this is needed in webpack 2 for minifying CSS
-    new webpack.LoaderOptionsPlugin({
-      minimize: true
-    }),
     // minify JS
     new webpack.optimize.UglifyJsPlugin({
       compress: {
         warnings: false
       }
+    }),
+    // auto generate service worker
+    new SWPrecachePlugin({
+      cacheId: 'vue-hn',
+      filename: 'service-worker.js',
+      dontCacheBustUrlsMatching: /./,
+      staticFileGlobsIgnorePatterns: [/index\.html$/, /\.map$/]
     })
   )
 }

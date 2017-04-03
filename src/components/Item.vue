@@ -4,7 +4,7 @@
     <span class="title">
       <template v-if="item.url">
         <a :href="item.url" target="_blank">{{ item.title }}</a>
-        <span class="host">({{ item.url | host }})</span>
+        <span class="host"> ({{ item.url | host }})</span>
       </template>
       <template v-else>
         <router-link :to="'/item/' + item.id">{{ item.title }}</router-link>
@@ -27,12 +27,14 @@
 </template>
 
 <script>
+import { timeAgo } from '../filters'
+
 export default {
   name: 'news-item',
   props: ['item'],
   // https://github.com/vuejs/vue/blob/next/packages/vue-server-renderer/README.md#component-caching
-  serverCacheKey: props => {
-    return `${props.item.id}::${props.item.__lastUpdated}`
+  serverCacheKey: ({ item: { id, __lastUpdated, time }}) => {
+    return `${id}::${__lastUpdated}::${timeAgo(time)}`
   }
 }
 </script>
