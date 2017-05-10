@@ -56,10 +56,12 @@ module.exports = {
       }
     ]
   },
+  // 设置生产环境入口文件大小超过300kb时提示
   performance: {
     maxEntrypointSize: 300000,
     hints: isProd ? 'warning' : false
   },
+  // 开发环境更友好的打包错误提示
   plugins: isProd ? [] : [
     new FriendlyErrorsPlugin()
   ]
